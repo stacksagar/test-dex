@@ -68,8 +68,8 @@ const ComingSoonPopup: React.FC<ComingSoonPopupProps> = ({
 
           {/* Description */}
           <p className="text-gray-600 mb-6 leading-relaxed">
-            Wallet integration is currently under development. We're working
-            hard to bring you a seamless connection experience.
+            Wallet integration is currently under development. We&apos;re
+            working hard to bring you a seamless connection experience.
           </p>
 
           {/* Features list */}
