@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 const CMC_API_BASE = "https://pro-api.coinmarketcap.com/v1";
-const CMC_API_KEY = "526b7195-9842-4b17-85c6-836d3242d846";
+const CMC_API_KEY = "151d9d43-1bae-4f27-92fc-26f74a87607b";
 
 export async function GET(request: NextRequest) {
   try {

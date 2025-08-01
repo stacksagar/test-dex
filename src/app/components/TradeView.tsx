@@ -181,7 +181,7 @@ const InfoBar = () => {
   const totalOpenInterest = currentTokenData?.volume_24h
     ? formatVolume(currentTokenData.volume_24h * 2.8) // 2.8x multiplier for realistic OI
     : "$0.00";
-  
+
   // Use funding rate to determine OI direction (more accurate than price change)
   const openInterestChange = currentTokenData?.funding_rate?.average_rate || 0;
   const isOpenInterestPositive = openInterestChange >= 0;
