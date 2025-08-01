@@ -92,7 +92,7 @@ function Staking() {
 
   // Calculate estimated receive amount based on current token price
   const calculateEstimatedReceive = () => {
-    if (!amount || !currentTokenData?.price) return "245.32 KTA";
+    if (!amount || !currentTokenData?.price) return "0.00 KTA";
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount)) return "0 KTA";
@@ -110,7 +110,7 @@ function Staking() {
 
   // Calculate order value in USD
   const calculateOrderValue = () => {
-    if (!amount || !currentTokenData?.price) return "$500.00";
+    if (!amount || !currentTokenData?.price) return "$0.00";
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount)) return "$0.00";
@@ -131,7 +131,7 @@ function Staking() {
   const calculateFee = () => {
     const orderValue = calculateOrderValue();
     const numValue = parseFloat(orderValue.replace("$", ""));
-    if (isNaN(numValue)) return "$2.50";
+    if (isNaN(numValue)) return "$0.00";
 
     const fee = numValue * 0.005; // 0.5% fee
     return `$${fee.toFixed(2)}`;
