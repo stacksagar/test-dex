@@ -117,7 +117,7 @@ const InfoBar = () => {
   });
 
   const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({});
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [fetched, setFetched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
