@@ -173,10 +173,10 @@ const InfoBar = () => {
   const availableLiquidity = currentTokenData?.liquidity?.total_tvl
     ? formatVolume(currentTokenData.liquidity.total_tvl)
     : "$72.8m";
-  
+
   // Available liquidity change (use price change as proxy for liquidity change)
   const liquidityChange = currentTokenData?.percent_change_24h
-    ? currentTokenData.percent_change_24h / 100 * 0.5 // Half the price change as liquidity change
+    ? (currentTokenData.percent_change_24h / 100) * 0.5 // Half the price change as liquidity change
     : 0.032; // Default +3.2%
 
   const openInterestUp = currentTokenData?.volume_24h
@@ -187,8 +187,11 @@ const InfoBar = () => {
     : "$23.9m";
 
   // Net funding rate (single value with direction)
-  const netFundingRate = currentTokenData?.funding_rate?.average_rate || 0.000014; // Default 0.0014%
-  const fundingRateFormatted = `${netFundingRate >= 0 ? '+' : ''}${(netFundingRate * 100).toFixed(4)}%`;
+  const netFundingRate =
+    currentTokenData?.funding_rate?.average_rate || 0.000014; // Default 0.0014%
+  const fundingRateFormatted = `${netFundingRate >= 0 ? "+" : ""}${(
+    netFundingRate * 100
+  ).toFixed(4)}%`;
   const isFundingPositive = netFundingRate >= 0;
 
   return (
@@ -251,9 +254,11 @@ const InfoBar = () => {
               Available Liquidity
             </span>
             <div className="text-sm text-[#262626]">
-              <div className={`flex items-center gap-1 ${
-                liquidityChange >= 0 ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
-              }`}>
+              <div
+                className={`flex items-center gap-1 ${
+                  liquidityChange >= 0 ? "text-[#0FDE8D]" : "text-[#FF506A]"
+                }`}
+              >
                 {liquidityChange >= 0 ? <ArrowUp /> : <ArrowDown />}
                 <span>{availableLiquidity}</span>
               </div>
@@ -262,9 +267,11 @@ const InfoBar = () => {
           <div className="mr-4">
             <span className="block text-xs text-[#595959]">Net Rate / 1h</span>
             <div className="text-sm text-[#262626]">
-              <div className={`flex items-center gap-1 ${
-                isFundingPositive ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
-              }`}>
+              <div
+                className={`flex items-center gap-1 ${
+                  isFundingPositive ? "text-[#0FDE8D]" : "text-[#FF506A]"
+                }`}
+              >
                 {isFundingPositive ? <ArrowUp /> : <ArrowDown />}
                 <span>{fundingRateFormatted}</span>
               </div>
@@ -322,9 +329,11 @@ const InfoBar = () => {
           <span className="block text-xs text-[#595959] ">
             Available Liquidity
           </span>
-          <div className={`text-sm flex items-center gap-2 ${
-            liquidityChange >= 0 ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
-          }`}>
+          <div
+            className={`text-sm flex items-center gap-2 ${
+              liquidityChange >= 0 ? "text-[#0FDE8D]" : "text-[#FF506A]"
+            }`}
+          >
             <div className="flex items-center gap-1">
               {liquidityChange >= 0 ? <ArrowUp /> : <ArrowDown />}
               <span>{availableLiquidity}</span>
@@ -333,9 +342,11 @@ const InfoBar = () => {
         </div>
         <div>
           <span className="block text-xs text-[#595959] ">Net Rate / 1h</span>
-          <div className={`text-sm flex items-center gap-2 ${
-            isFundingPositive ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
-          }`}>
+          <div
+            className={`text-sm flex items-center gap-2 ${
+              isFundingPositive ? "text-[#0FDE8D]" : "text-[#FF506A]"
+            }`}
+          >
             <div className="flex items-center gap-1">
               {isFundingPositive ? <ArrowUp /> : <ArrowDown />}
               <span>{fundingRateFormatted}</span>
