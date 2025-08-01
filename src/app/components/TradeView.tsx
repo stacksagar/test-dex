@@ -114,10 +114,6 @@ export default function TradeView() {
   );
 }
 
-const timeline = ["5m", "30m", "1h", "D"];
-
-const periods = ["1D", "5D", "1M", "3M", "6M", "YTD", "1Y", "5Y", "All"];
-
 const InfoBar = () => {
   const [exchange, setExchange] = useQueryState("exchange", {
     defaultValue: options[0].value,
