@@ -1,0 +1,445 @@
+"use client";
+import ArrowDown from "@/assets/arrow-down.svg";
+import ArrowUp from "@/assets/arrow-up.svg";
+import Candles from "@/assets/candles.svg";
+import DateIcon from "@/assets/Date.svg";
+import {
+  currencyPairs,
+  formatPercentChange,
+  formatPrice,
+  formatVolume,
+  getBaseSymbol,
+} from "@/data/dummyData";
+import { apiService } from "@/lib/apiService";
+import { cn } from "@/utils/tailwind";
+import { ChevronDown } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { useEffect, useState } from "react";
+import Select, { components } from "react-select";
+import { TokenData } from "../../../types";
+import TradingViewChart from "../../components/TradingViewChart";
+
+const options = currencyPairs.map((pair) => ({
+  label: pair.label,
+  value: pair.value.replace("/", "_"),
+}));
+
+const CustomSingleValue = (props: any) => {
+  return (
+    <components.SingleValue {...props}>
+      <span className="font-semibold block font-area text-[#262626] text-base">
+        {props.data.label}
+      </span>
+      <span className="font-semibold block text-xs text-[#595959]">
+        [{props.data.label}]
+      </span>
+    </components.SingleValue>
+  );
+};
+
+const customStyles = {
+  control: (provided: any, state: any) => ({
+    ...provided,
+    height: "40px",
+    minHeight: "40px",
+    fontSize: "14px",
+    border: "none",
+    boxShadow: "none",
+    padding: "0 8px",
+    opacity: state.isDisabled ? 0.6 : 1,
+    cursor: state.isDisabled ? "not-allowed" : "pointer",
+  }),
+  indicatorsContainer: (provided: any) => ({
+    ...provided,
+    padding: 0,
+  }),
+  dropdownIndicator: (provided: any) => ({
+    ...provided,
+    padding: "0",
+  }),
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+  valueContainer: (provided: any) => ({
+    ...provided,
+    padding: 0,
+  }),
+  singleValue: (provided: any, state: any) => ({
+    ...provided,
+    fontSize: "24px",
+    color: state.isDisabled ? "#999" : provided.color,
+  }),
+  placeholder: (provided: any) => ({
+    ...provided,
+    fontSize: "24px",
+    color: "#999",
+  }),
+};
+
+export default function TradeView() {
+  const [exchange] = useQueryState("exchange", {
+    defaultValue: options[0].value,
+  });
+  const [timeline] = useQueryState("timeline", {
+    defaultValue: "D",
+  });
+
+  // Get current token symbol from selected exchange
+  const currentPair = options.find((opt) => opt.value === exchange);
+  const currentSymbol = currentPair ? getBaseSymbol(currentPair.label) : "BTC";
+
+  // Convert timeline to TradingView format
+  const getChartInterval = (timeline: string) => {
+    switch (timeline) {
+      case "5m":
+        return "5";
+      case "1h":
+        return "60";
+      case "D":
+        return "1D";
+      default:
+        return "1D";
+    }
+  };
+
+  return (
+    <div className="w-full flex flex-col">
+      <InfoBar />
+      {/* <TimelineBar /> */}
+      <div className="w-full grow flex justify-center items-center relative min-h-[471px]">
+        <TradingViewChart
+          symbol={currentSymbol + "USDT"}
+          height={600}
+          width="100%"
+          theme="light"
+          interval={getChartInterval(timeline)}
+        />
+      </div>
+      {/* <TimelineBar2 /> */}
+    </div>
+  );
+}
+
+const timeline = ["5m", "30m", "1h", "D"];
+
+const TimelineBar = () => {
+  const [tab, setTab] = useQueryState("timeline", {
+    defaultValue: timeline[0],
+  });
+  return (
+    <div className="h-[38px] border-y border-[#E5E5E5] flex items-stretch">
+      <div className="h-full border-r border-[#E5E5E5] w-fit pl-1">
+        <div className="flex items-center font-trebuchet-ms text-[#A8A29E] h-full text-sm">
+          {timeline.map((item) => (
+            <button
+              onClick={() => setTab(item)}
+              key={item}
+              className={cn(
+                "w-[27px] h-full flex items-center justify-center",
+                {
+                  "text-black font-semibold": item === tab,
+                }
+              )}
+            >
+              {item}
+            </button>
+          ))}
+          <li className="w-[27] h-full flex items-center justify-center">
+            <ChevronDown size={14} />
+          </li>
+        </div>
+      </div>
+      <div className="h-full border-r border-[#E5E5E5] w-fit px-1 py-2">
+        <div className="w-[1px] h-full bg-black" />
+      </div>
+      <div className="h-full border-r border-[#E5E5E5] w-fit px-1 py-2 flex items-center">
+        <Candles />
+      </div>
+    </div>
+  );
+};
+
+const periods = ["1D", "5D", "1M", "3M", "6M", "YTD", "1Y", "5Y", "All"];
+const TimelineBar2 = () => {
+  const [period, setPeriod] = useQueryState("period", {
+    defaultValue: periods[0],
+  });
+  return (
+    <div className="hidden h-[38px] border-y border-[#E5E5E5] lg:flex items-stretch text-xs text-[#A8A29E] justify-between pr-2">
+      <div className="flex items-center">
+        <div className="h-full w-fit pl-1">
+          <ul className="flex items-center font-roboto h-full text-xs">
+            {periods.map((item) => (
+              <button
+                onClick={() => setPeriod(item)}
+                key={item}
+                className={cn(
+                  "w-[27] h-full flex items-center justify-center",
+                  {
+                    "text-black font-semibold": item === period,
+                  }
+                )}
+              >
+                {item}
+              </button>
+            ))}
+          </ul>
+        </div>
+        <div className="h-full w-fit px-1 py-2">
+          <div className="w-[1px] h-full bg-gray-200" />
+        </div>
+        <div className="h-full w-fit px-1 py-2 flex items-center">
+          <DateIcon />
+        </div>
+      </div>
+      <div className=" flex items-center gap-1.5">
+        <p className="border-r border-[#E5E5E5] pr-1">09:27:02 (UTC)</p>{" "}
+        <span>%</span> <span>log</span>{" "}
+        <span className="text-[#2E60FF]">auto</span>
+      </div>
+    </div>
+  );
+};
+
+const InfoBar = () => {
+  const [exchange, setExchange] = useQueryState("exchange", {
+    defaultValue: options[0].value,
+  });
+
+  const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({});
+  const [loading, setLoading] = useState(true);
+  const [fetched, setFetched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Get current token symbol from selected exchange
+  const currentPair = options.find((opt) => opt.value === exchange);
+  const currentSymbol = currentPair ? getBaseSymbol(currentPair.label) : "BTC";
+  const currentTokenData = tokenData[currentSymbol];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Get all unique symbols from currency pairs
+        const symbols = Array.from(
+          new Set(currencyPairs.map((pair) => getBaseSymbol(pair.label)))
+        );
+
+        const data = await apiService.fetchCompleteTokenData(symbols);
+        setTokenData(data);
+      } catch (err) {
+        console.error("Error fetching token data:", err);
+        setError("Failed to fetch market data");
+      } finally {
+        setLoading(false);
+        setFetched(true);
+      }
+    };
+
+    fetchData();
+
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Format the data for display
+  const displayPrice = currentTokenData?.price
+    ? formatPrice(currentTokenData.price)
+    : "$105,385.21";
+  const displayVolume = currentTokenData?.volume_24h
+    ? formatVolume(currentTokenData.volume_24h)
+    : "$22.1m";
+  const percentChange = currentTokenData?.percent_change_24h
+    ? formatPercentChange(currentTokenData.percent_change_24h)
+    : { formatted: "+0.36%", isPositive: true };
+
+  // Calculate some derived values for display
+  const availableLiquidityUp = currentTokenData?.liquidity?.total_tvl
+    ? formatVolume(currentTokenData.liquidity.total_tvl * 0.52)
+    : "$36.9m";
+  const availableLiquidityDown = currentTokenData?.liquidity?.total_tvl
+    ? formatVolume(currentTokenData.liquidity.total_tvl * 0.48)
+    : "$35.9m";
+
+  const openInterestUp = currentTokenData?.volume_24h
+    ? formatVolume(currentTokenData.volume_24h * 0.48)
+    : "$22.9m";
+  const openInterestDown = currentTokenData?.volume_24h
+    ? formatVolume(currentTokenData.volume_24h * 0.52)
+    : "$23.9m";
+
+  const fundingRateUp = currentTokenData?.funding_rate?.average_rate
+    ? `+${(currentTokenData.funding_rate.average_rate * 100).toFixed(4)}%`
+    : "+0.0014%";
+  const fundingRateDown = currentTokenData?.funding_rate?.average_rate
+    ? `-${(Math.abs(currentTokenData.funding_rate.average_rate) * 100).toFixed(
+        4
+      )}%`
+    : "-0.0024%";
+
+  return (
+    <div className="flex flex-col lg:flex-row items-stretch h-auto lg:h-[80px] relative">
+      {/* Global loading overlay */}
+      {!fetched && (
+        <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+            Loading market data...
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="absolute top-2 right-2 text-xs text-red-500 z-20">
+          {error}
+        </div>
+      )}
+
+      {/* Sync indicator */}
+      {!loading && !error && (
+        <div className="absolute top-2 right-2 text-xs text-green-600 z-20">
+          ✓ Synced
+        </div>
+      )}
+
+      {/* Mobile: Three-column layout */}
+      <div className="flex flex-row w-full lg:hidden">
+        {/* Left: Select dropdown */}
+        <div className="flex flex-col justify-center min-w-[90px]">
+          <Select
+            value={options.find((item) => item.value === exchange)}
+            options={options}
+            styles={customStyles}
+            onChange={(value) => setExchange(value?.value || "")}
+            components={{ SingleValue: CustomSingleValue }}
+            isDisabled={!fetched}
+            placeholder={!fetched ? "Loading..." : "Select pair"}
+            isLoading={!fetched}
+          />
+        </div>
+        {/* Center: Price and 24h Volume */}
+        <div className="flex flex-col flex-1 items-center justify-center">
+          <span className="block text-sm text-[#262626]">{displayPrice}</span>
+          <span
+            className={`text-xs ${
+              percentChange.isPositive ? "text-[#0FDE8D]" : "text-[#FF506A]"
+            }`}
+          >
+            {percentChange.formatted}
+          </span>
+          <span className="block text-xs text-[#595959] mt-2">24h Volume</span>
+          <span className="text-sm text-[#262626]">{displayVolume}</span>
+        </div>
+        {/* Right: Available Liquidity and Net Rate */}
+        <div className="flex flex-col items-end justify-center min-w-[110px] gap-2 pr-2">
+          <div>
+            <span className="block text-xs text-[#595959]">
+              Available Liquidity
+            </span>
+            <div className="text-sm text-[#262626]">
+              <div className="flex items-center gap-1">
+                <ArrowUp />
+                <span>{availableLiquidityUp}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <ArrowDown />
+                <span>{availableLiquidityDown}</span>
+              </div>
+            </div>
+          </div>
+          <div className="mr-4">
+            <span className="block text-xs text-[#595959]">Net Rate / 1h</span>
+            <div className="text-sm text-[#262626]">
+              <div className="flex items-center gap-1 text-[#0FDE8D]">
+                <ArrowUp />
+                <span>{fundingRateUp}</span>
+              </div>
+              <div className="flex items-center gap-1 text-[#FF506A]">
+                <ArrowDown />
+                <span>{fundingRateDown}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Desktop: original layout */}
+      <div className="grow gap-6 items-center hidden lg:flex">
+        <div className="flex flex-col justify-center min-w-[90px]">
+          <Select
+            value={options.find((item) => item.value === exchange)}
+            options={options}
+            styles={customStyles}
+            onChange={(value) => setExchange(value?.value || "")}
+            components={{ SingleValue: CustomSingleValue }}
+            isDisabled={!fetched}
+            placeholder={!fetched ? "Loading..." : "Select pair"}
+            isLoading={!fetched}
+          />
+        </div>
+        <div>
+          <span className="block text-sm text-[#262626]">{displayPrice}</span>
+          <span
+            className={`text-xs ${
+              percentChange.isPositive ? "text-[#0FDE8D]" : "text-[#FF506A]"
+            }`}
+          >
+            {percentChange.formatted}
+          </span>
+        </div>
+        <div>
+          <span className="block text-xs text-[#595959] ">
+            24h <br /> Volume
+          </span>
+          <span className="text-sm text-[#262626]">{displayVolume}</span>
+        </div>
+        <div>
+          <div className="block text-xs text-[#595959] ">
+            Open Interest (<span className="text-[#0FDE8D]">48%</span>/
+            <span className="text-[#FF506A]">52%</span>)
+          </div>
+          <div className="text-sm text-[#262626] flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <ArrowUp />
+              <span>{openInterestUp}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <ArrowDown />
+              <span>{openInterestDown}</span>
+            </div>
+          </div>
+        </div>
+        <div className="">
+          <span className="block text-xs text-[#595959] ">
+            Available Liquidity
+          </span>
+          <div className="text-sm text-[#262626] flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <ArrowUp />
+              <span>{availableLiquidityUp}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <ArrowDown />
+              <span>{availableLiquidityDown}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span className="block text-xs text-[#595959] ">Net Rate / 1h</span>
+          <div className="text-sm text-[#262626] flex items-center gap-2">
+            <div className="flex items-center gap-1 text-[#0FDE8D]">
+              <ArrowUp />
+              <span>{fundingRateUp}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[#FF506A]">
+              <ArrowDown />
+              <span>{fundingRateDown}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
