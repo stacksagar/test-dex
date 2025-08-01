@@ -175,19 +175,15 @@ const InfoBar = () => {
     ? (currentTokenData.percent_change_24h / 100) * 0.5 // Half the price change as liquidity change
     : 0.032; // Default +3.2%
 
-  // const openInterestUp = currentTokenData?.volume_24h
-  //   ? formatVolume(currentTokenData.volume_24h * 0.48)
-  //   : "$22.9m";
-  // const openInterestDown = currentTokenData?.volume_24h
-  //   ? formatVolume(currentTokenData.volume_24h * 0.52)
-  //   : "$23.9m";
-
-  // Open Interest (single value with direction based on market sentiment)
-  // Logic: Use volume as proxy for open interest, direction based on price change
+  // Open Interest - calculated as a multiple of volume to represent total positions
+  // Logic: Open Interest typically 2-4x higher than daily volume in crypto markets
+  // Direction based on funding rate (positive funding = more longs = bullish OI)
   const totalOpenInterest = currentTokenData?.volume_24h
-    ? formatVolume(currentTokenData.volume_24h)
+    ? formatVolume(currentTokenData.volume_24h * 2.8) // 2.8x multiplier for realistic OI
     : "$0.00";
-  const openInterestChange = currentTokenData?.percent_change_24h || 0;
+  
+  // Use funding rate to determine OI direction (more accurate than price change)
+  const openInterestChange = currentTokenData?.funding_rate?.average_rate || 0;
   const isOpenInterestPositive = openInterestChange >= 0;
 
   // Net funding rate (single value with direction)
