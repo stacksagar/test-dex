@@ -56,7 +56,7 @@ const ComingSoonPopup: React.FC<ComingSoonPopupProps> = ({
         <div className="text-center">
           {/* Icon */}
           <div className="mb-6">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-r from-orange-400 to-red-400 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center">
               <span className="text-2xl">🚀</span>
             </div>
           </div>
@@ -75,15 +75,15 @@ const ComingSoonPopup: React.FC<ComingSoonPopupProps> = ({
           {/* Features list */}
           <div className="text-left mb-6 space-y-2">
             <div className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-green-500">✓</span>
+              <span className="text-primary">✓</span>
               <span>Multiple wallet support</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-green-500">✓</span>
+              <span className="text-primary">✓</span>
               <span>Secure transactions</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-700">
-              <span className="text-green-500">✓</span>
+              <span className="text-primary">✓</span>
               <span>Real-time portfolio tracking</span>
             </div>
           </div>
@@ -91,7 +91,7 @@ const ComingSoonPopup: React.FC<ComingSoonPopupProps> = ({
           {/* Action Button */}
           <button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-orange-400 to-red-400 text-white font-semibold py-3 px-6 rounded-xl hover:from-orange-500 hover:to-red-500 transition-all duration-200 transform hover:scale-105"
+            className="w-full bg-primary text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105"
           >
             Got it!
           </button>

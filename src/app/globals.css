@@ -7,6 +7,14 @@
   --color-primary: #ff886d;
 }
 
+.text-primary {
+  color: var(--color-primary);
+}
+.bg-primary {
+  background: var(--color-primary); 
+  color: white;
+}
+
 body {
   font-family: inter;
 }
