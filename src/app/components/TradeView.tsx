@@ -116,7 +116,7 @@ const InfoBar = () => {
     defaultValue: options[0].value,
   });
 
-  const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({}); 
+  const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({});
   const [fetched, setFetched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,7 +127,7 @@ const InfoBar = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try { 
+      try {
         setError(null);
 
         // Get all unique symbols from currency pairs
@@ -140,7 +140,7 @@ const InfoBar = () => {
       } catch (err) {
         console.error("Error fetching token data:", err);
         setError("Failed to fetch market data");
-      } finally { 
+      } finally {
         setFetched(true);
       }
     };
@@ -182,11 +182,18 @@ const InfoBar = () => {
     ? formatVolume(currentTokenData.volume_24h * 0.52)
     : "$23.9m";
 
+  // Open Interest (single value with direction based on market sentiment)
+  // Logic: Use volume as proxy for open interest, direction based on price change
+  const totalOpenInterest = currentTokenData?.volume_24h
+    ? formatVolume(currentTokenData.volume_24h)
+    : "$0.00";
+  const openInterestChange = currentTokenData?.percent_change_24h || 0;
+  const isOpenInterestPositive = openInterestChange >= 0;
+
   // Net funding rate (single value with direction)
   // Logic: Positive rate = Longs pay Shorts (bullish sentiment), Negative = Shorts pay Longs (bearish sentiment)
   // Arrow shows: Green ↗️ if positive funding rate, Red ↘️ if negative funding rate
-  const netFundingRate =
-    currentTokenData?.funding_rate?.average_rate || 0.000014; // Default 0.0014%
+  const netFundingRate = currentTokenData?.funding_rate?.average_rate || 0.0; // Default 0.0014%
   const fundingRateFormatted = `${netFundingRate >= 0 ? "+" : ""}${(
     netFundingRate * 100
   ).toFixed(4)}%`;
@@ -301,18 +308,15 @@ const InfoBar = () => {
           <span className="text-sm text-[#262626]">{displayVolume}</span>
         </div>
         <div>
-          <div className="block text-xs text-[#595959] ">
-            Open Interest (<span className="text-[#0FDE8D]"> 48% </span> /{" "}
-            <span className="text-[#FF506A]"> 52% </span>)
-          </div>
-          <div className="text-sm text-[#262626] flex items-center gap-2">
+          <div className="block text-xs text-[#595959] ">Open Interest</div>
+          <div
+            className={`text-sm flex items-center gap-2 ${
+              isOpenInterestPositive ? "text-[#0FDE8D]" : "text-[#FF506A]"
+            }`}
+          >
             <div className="flex items-center gap-1">
-              <ArrowUp />
-              <span>{openInterestUp}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ArrowDown />
-              <span>{openInterestDown}</span>
+              {isOpenInterestPositive ? <ArrowUp /> : <ArrowDown />}
+              <span>{totalOpenInterest}</span>
             </div>
           </div>
         </div>
