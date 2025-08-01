@@ -104,8 +104,7 @@ export default function TradeView() {
 
   return (
     <div className="w-full flex flex-col">
-      <InfoBar />
-      {/* <TimelineBar /> */}
+      <InfoBar /> 
       <div className="w-full grow flex justify-center items-center relative min-h-[471px]">
         <TradingViewChart
           symbol={currentSymbol + "USDT"}
@@ -114,92 +113,15 @@ export default function TradeView() {
           theme="light"
           interval={getChartInterval(timeline)}
         />
-      </div>
-      {/* <TimelineBar2 /> */}
+      </div> 
     </div>
   );
 }
 
 const timeline = ["5m", "30m", "1h", "D"];
-
-const TimelineBar = () => {
-  const [tab, setTab] = useQueryState("timeline", {
-    defaultValue: timeline[0],
-  });
-  return (
-    <div className="h-[38px] border-y border-[#E5E5E5] flex items-stretch">
-      <div className="h-full border-r border-[#E5E5E5] w-fit pl-1">
-        <div className="flex items-center font-trebuchet-ms text-[#A8A29E] h-full text-sm">
-          {timeline.map((item) => (
-            <button
-              onClick={() => setTab(item)}
-              key={item}
-              className={cn(
-                "w-[27px] h-full flex items-center justify-center",
-                {
-                  "text-black font-semibold": item === tab,
-                }
-              )}
-            >
-              {item}
-            </button>
-          ))}
-          <li className="w-[27] h-full flex items-center justify-center">
-            <ChevronDown size={14} />
-          </li>
-        </div>
-      </div>
-      <div className="h-full border-r border-[#E5E5E5] w-fit px-1 py-2">
-        <div className="w-[1px] h-full bg-black" />
-      </div>
-      <div className="h-full border-r border-[#E5E5E5] w-fit px-1 py-2 flex items-center">
-        <Candles />
-      </div>
-    </div>
-  );
-};
-
+ 
 const periods = ["1D", "5D", "1M", "3M", "6M", "YTD", "1Y", "5Y", "All"];
-const TimelineBar2 = () => {
-  const [period, setPeriod] = useQueryState("period", {
-    defaultValue: periods[0],
-  });
-  return (
-    <div className="hidden h-[38px] border-y border-[#E5E5E5] lg:flex items-stretch text-xs text-[#A8A29E] justify-between pr-2">
-      <div className="flex items-center">
-        <div className="h-full w-fit pl-1">
-          <ul className="flex items-center font-roboto h-full text-xs">
-            {periods.map((item) => (
-              <button
-                onClick={() => setPeriod(item)}
-                key={item}
-                className={cn(
-                  "w-[27] h-full flex items-center justify-center",
-                  {
-                    "text-black font-semibold": item === period,
-                  }
-                )}
-              >
-                {item}
-              </button>
-            ))}
-          </ul>
-        </div>
-        <div className="h-full w-fit px-1 py-2">
-          <div className="w-[1px] h-full bg-gray-200" />
-        </div>
-        <div className="h-full w-fit px-1 py-2 flex items-center">
-          <DateIcon />
-        </div>
-      </div>
-      <div className=" flex items-center gap-1.5">
-        <p className="border-r border-[#E5E5E5] pr-1">09:27:02 (UTC)</p>{" "}
-        <span>%</span> <span>log</span>{" "}
-        <span className="text-[#2E60FF]">auto</span>
-      </div>
-    </div>
-  );
-};
+ 
 
 const InfoBar = () => {
   const [exchange, setExchange] = useQueryState("exchange", {
