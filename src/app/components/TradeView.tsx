@@ -1,8 +1,6 @@
 "use client";
 import ArrowDown from "@/assets/arrow-down.svg";
 import ArrowUp from "@/assets/arrow-up.svg";
-import Candles from "@/assets/candles.svg";
-import DateIcon from "@/assets/Date.svg";
 import {
   currencyPairs,
   formatPercentChange,
@@ -11,8 +9,6 @@ import {
   getBaseSymbol,
 } from "@/data/dummyData";
 import { apiService } from "@/lib/apiService";
-import { cn } from "@/utils/tailwind";
-import { ChevronDown } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import Select, { components } from "react-select";
@@ -104,7 +100,7 @@ export default function TradeView() {
 
   return (
     <div className="w-full flex flex-col">
-      <InfoBar /> 
+      <InfoBar />
       <div className="w-full grow flex justify-center items-center relative min-h-[471px]">
         <TradingViewChart
           symbol={currentSymbol + "USDT"}
@@ -113,15 +109,14 @@ export default function TradeView() {
           theme="light"
           interval={getChartInterval(timeline)}
         />
-      </div> 
+      </div>
     </div>
   );
 }
 
 const timeline = ["5m", "30m", "1h", "D"];
- 
+
 const periods = ["1D", "5D", "1M", "3M", "6M", "YTD", "1Y", "5Y", "All"];
- 
 
 const InfoBar = () => {
   const [exchange, setExchange] = useQueryState("exchange", {
