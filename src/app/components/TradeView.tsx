@@ -104,7 +104,7 @@ export default function TradeView() {
       <div className="w-full grow flex justify-center items-center relative min-h-[471px]">
         <TradingViewChart
           symbol={currentSymbol + "USDT"}
-          height={600}
+          height={520}
           width="100%"
           theme="light"
           interval={getChartInterval(timeline)}
@@ -310,8 +310,8 @@ const InfoBar = () => {
         </div>
         <div>
           <div className="block text-xs text-[#595959] ">
-            Open Interest (<span className="text-[#0FDE8D]">48%</span>/
-            <span className="text-[#FF506A]">52%</span>)
+            Open Interest (<span className="text-[#0FDE8D]"> 48% </span> /{" "}
+            <span className="text-[#FF506A]"> 52% </span>)
           </div>
           <div className="text-sm text-[#262626] flex items-center gap-2">
             <div className="flex items-center gap-1">
