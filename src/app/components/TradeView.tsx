@@ -116,8 +116,7 @@ const InfoBar = () => {
     defaultValue: options[0].value,
   });
 
-  const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({});
-  const [_loading, setLoading] = useState(true);
+  const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({}); 
   const [fetched, setFetched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -128,8 +127,7 @@ const InfoBar = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        setLoading(true);
+      try { 
         setError(null);
 
         // Get all unique symbols from currency pairs
@@ -142,8 +140,7 @@ const InfoBar = () => {
       } catch (err) {
         console.error("Error fetching token data:", err);
         setError("Failed to fetch market data");
-      } finally {
-        setLoading(false);
+      } finally { 
         setFetched(true);
       }
     };
