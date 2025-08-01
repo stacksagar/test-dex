@@ -67,6 +67,13 @@ const types = [
   },
 ];
 
+const orderTypes = [
+  { value: "Market", label: "Market" },
+  { value: "Limit", label: "Limit" },
+  { value: "Stop Market", label: "Stop Market" },
+  { value: "Stop Limit", label: "Stop Limit" },
+];
+
 function Staking() {
   // Use shared URL state for synchronization with TradeView
   const [exchange, setExchange] = useQueryState("exchange", {
@@ -75,6 +82,7 @@ function Staking() {
 
   const [amount, setAmount] = useState<string>("");
   const [type, setType] = useState("long");
+  const [orderType, setOrderType] = useState("Market");
   const [percentages, setPercentages] = useState("");
   const [currencyIndex, setCurrencyIndex] = useState(0);
   const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({});
@@ -92,15 +100,27 @@ function Staking() {
 
   // Calculate estimated receive amount based on current token price
   const calculateEstimatedReceive = () => {
-    if (!amount || !currentTokenData?.price) return "0.00 KTA";
+    if (!amount || !currentTokenData?.price) {
+      // Return the currency you would receive based on current currency index
+      const receiveCurrency = currencyIndex === 0 
+        ? currentPair.value.split("/")[1] // If paying with base, receive quote
+        : currentPair.value.split("/")[0]; // If paying with quote, receive base
+      return `0.00 ${receiveCurrency}`;
+    }
 
     const numAmount = parseFloat(amount);
-    if (isNaN(numAmount)) return "0 KTA";
+    if (isNaN(numAmount)) {
+      const receiveCurrency = currencyIndex === 0 
+        ? currentPair.value.split("/")[1] 
+        : currentPair.value.split("/")[0];
+      return `0 ${receiveCurrency}`;
+    }
 
     // If trading from base currency to quote currency
     if (currencyIndex === 0) {
       const quoteAmount = numAmount * currentTokenData.price;
-      return `${quoteAmount.toFixed(2)} KTA`;
+      const quoteCurrency = currentPair.value.split("/")[1];
+      return `${quoteAmount.toFixed(2)} ${quoteCurrency}`;
     } else {
       // If trading from quote currency to base currency
       const baseAmount = numAmount / currentTokenData.price;
@@ -159,7 +179,7 @@ function Staking() {
 
   const tableData = [
     { label: "Est. Receive", value: calculateEstimatedReceive() },
-    { label: "Type", value: "Market" },
+    { label: "Type", value: orderType },
     { label: "Order Value", value: calculateOrderValue() },
     { label: "Fee", value: calculateFee() },
   ];
@@ -266,6 +286,44 @@ function Staking() {
           </button>
         ))}
       </div>
+
+      {/* Order Type Selector */}
+      <div className="">
+        <label
+          htmlFor="orderType"
+          className="block text-sm text-[#595959] mb-2"
+        >
+          Order Type
+        </label>
+        <Select
+          value={orderTypes.find((option) => option.value === orderType)}
+          onChange={(value) => {
+            if (value) {
+              setOrderType(value.value);
+            }
+          }}
+          options={orderTypes}
+          styles={{
+            ...customStyles,
+            singleValue: (provided: any, state: any) => ({
+              ...provided,
+              fontSize: "16px",
+              fontWeight: "600",
+              color: state.isDisabled ? "#999" : provided.color,
+            }),
+            placeholder: (provided: any) => ({
+              ...provided,
+              fontSize: "16px",
+              fontWeight: "600",
+              color: "#999",
+            }),
+          }}
+          isDisabled={loading}
+          placeholder={loading ? "Loading..." : "Select order type"}
+          isLoading={loading}
+        />
+      </div>
+
       <div className="pb-5">
         <FuturesStrategySlider />
       </div>
