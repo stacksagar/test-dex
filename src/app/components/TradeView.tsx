@@ -170,12 +170,14 @@ const InfoBar = () => {
     : { formatted: "+0.36%", isPositive: true };
 
   // Calculate some derived values for display
-  const availableLiquidityUp = currentTokenData?.liquidity?.total_tvl
-    ? formatVolume(currentTokenData.liquidity.total_tvl * 0.52)
-    : "$36.9m";
-  const availableLiquidityDown = currentTokenData?.liquidity?.total_tvl
-    ? formatVolume(currentTokenData.liquidity.total_tvl * 0.48)
-    : "$35.9m";
+  const availableLiquidity = currentTokenData?.liquidity?.total_tvl
+    ? formatVolume(currentTokenData.liquidity.total_tvl)
+    : "$72.8m";
+  
+  // Available liquidity change (use price change as proxy for liquidity change)
+  const liquidityChange = currentTokenData?.percent_change_24h
+    ? currentTokenData.percent_change_24h / 100 * 0.5 // Half the price change as liquidity change
+    : 0.032; // Default +3.2%
 
   const openInterestUp = currentTokenData?.volume_24h
     ? formatVolume(currentTokenData.volume_24h * 0.48)
@@ -184,14 +186,10 @@ const InfoBar = () => {
     ? formatVolume(currentTokenData.volume_24h * 0.52)
     : "$23.9m";
 
-  const fundingRateUp = currentTokenData?.funding_rate?.average_rate
-    ? `+${(currentTokenData.funding_rate.average_rate * 100).toFixed(4)}%`
-    : "+0.0014%";
-  const fundingRateDown = currentTokenData?.funding_rate?.average_rate
-    ? `-${(Math.abs(currentTokenData.funding_rate.average_rate) * 100).toFixed(
-        4
-      )}%`
-    : "-0.0024%";
+  // Net funding rate (single value with direction)
+  const netFundingRate = currentTokenData?.funding_rate?.average_rate || 0.000014; // Default 0.0014%
+  const fundingRateFormatted = `${netFundingRate >= 0 ? '+' : ''}${(netFundingRate * 100).toFixed(4)}%`;
+  const isFundingPositive = netFundingRate >= 0;
 
   return (
     <div className="flex flex-col lg:flex-row items-stretch h-auto lg:h-[80px] relative">
@@ -253,26 +251,22 @@ const InfoBar = () => {
               Available Liquidity
             </span>
             <div className="text-sm text-[#262626]">
-              <div className="flex items-center gap-1">
-                <ArrowUp />
-                <span>{availableLiquidityUp}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <ArrowDown />
-                <span>{availableLiquidityDown}</span>
+              <div className={`flex items-center gap-1 ${
+                liquidityChange >= 0 ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
+              }`}>
+                {liquidityChange >= 0 ? <ArrowUp /> : <ArrowDown />}
+                <span>{availableLiquidity}</span>
               </div>
             </div>
           </div>
           <div className="mr-4">
             <span className="block text-xs text-[#595959]">Net Rate / 1h</span>
             <div className="text-sm text-[#262626]">
-              <div className="flex items-center gap-1 text-[#0FDE8D]">
-                <ArrowUp />
-                <span>{fundingRateUp}</span>
-              </div>
-              <div className="flex items-center gap-1 text-[#FF506A]">
-                <ArrowDown />
-                <span>{fundingRateDown}</span>
+              <div className={`flex items-center gap-1 ${
+                isFundingPositive ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
+              }`}>
+                {isFundingPositive ? <ArrowUp /> : <ArrowDown />}
+                <span>{fundingRateFormatted}</span>
               </div>
             </div>
           </div>
@@ -328,27 +322,23 @@ const InfoBar = () => {
           <span className="block text-xs text-[#595959] ">
             Available Liquidity
           </span>
-          <div className="text-sm text-[#262626] flex items-center gap-2">
+          <div className={`text-sm flex items-center gap-2 ${
+            liquidityChange >= 0 ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
+          }`}>
             <div className="flex items-center gap-1">
-              <ArrowUp />
-              <span>{availableLiquidityUp}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ArrowDown />
-              <span>{availableLiquidityDown}</span>
+              {liquidityChange >= 0 ? <ArrowUp /> : <ArrowDown />}
+              <span>{availableLiquidity}</span>
             </div>
           </div>
         </div>
         <div>
           <span className="block text-xs text-[#595959] ">Net Rate / 1h</span>
-          <div className="text-sm text-[#262626] flex items-center gap-2">
-            <div className="flex items-center gap-1 text-[#0FDE8D]">
-              <ArrowUp />
-              <span>{fundingRateUp}</span>
-            </div>
-            <div className="flex items-center gap-1 text-[#FF506A]">
-              <ArrowDown />
-              <span>{fundingRateDown}</span>
+          <div className={`text-sm flex items-center gap-2 ${
+            isFundingPositive ? 'text-[#0FDE8D]' : 'text-[#FF506A]'
+          }`}>
+            <div className="flex items-center gap-1">
+              {isFundingPositive ? <ArrowUp /> : <ArrowDown />}
+              <span>{fundingRateFormatted}</span>
             </div>
           </div>
         </div>
