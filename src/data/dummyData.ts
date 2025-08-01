@@ -1,4 +1,5 @@
-export const currencyPairs = [ 
+export const currencyPairs = [
+  { value: "KTA/USD", label: "KTA/USD" },
   { value: "BTC/USDT", label: "BTC/USDT" },
   { value: "ETH/USDT", label: "ETH/USDT" },
   { value: "SOL/USDT", label: "SOL/USDT" },

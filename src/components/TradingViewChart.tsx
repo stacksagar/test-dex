@@ -34,7 +34,9 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       if (containerRef.current && window.TradingView) {
         const widget = new window.TradingView.widget({
           autosize: true,
-          symbol: `BINANCE:${symbol}`,
+          symbol: symbol?.includes("KTA")
+            ? `BLOFIN:${symbol}`
+            : `BINANCE:${symbol}`,
           interval: interval,
           timezone: "Etc/UTC",
           theme: theme,
@@ -48,7 +50,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
           container_id: containerRef.current.id,
           width: width,
           height: height,
-          studies: ["Volume@tv-basicstudies", "MACD@tv-basicstudies"],
+          // studies: [], // Removed default indicators - users can add their own
           show_popup_button: true,
           popup_width: "1000",
           popup_height: "650",

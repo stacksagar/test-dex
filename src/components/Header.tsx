@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
 import Logo from "@/assets/logo.svg";
-import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { cn } from "@/utils/tailwind";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import ComingSoonPopup from "./ComingSoonPopup";
 
 const links = [
   { id: "perps", path: "", name: "Perps" },
@@ -18,6 +19,7 @@ const links = [
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -68,7 +70,10 @@ function Header() {
           </div>
           <div className="hidden md:flex w-[169px]">
             <div className="border-l w-full flex justify-end">
-              <button className="w-fit bg-primary h-[48px] rounded-xl font-semibold font-area text-[#262626] px-[14px] text-sm ml-auto">
+              <button
+                onClick={() => setShowComingSoon(true)}
+                className="w-fit bg-primary h-[48px] rounded-xl font-semibold font-area text-[#262626] px-[14px] text-sm ml-auto hover:bg-opacity-90 transition-all duration-200"
+              >
                 Connect Wallet
               </button>
             </div>
@@ -124,6 +129,12 @@ function Header() {
           </div>
         </div>
       )}
+
+      {/* Coming Soon Popup */}
+      <ComingSoonPopup
+        isOpen={showComingSoon}
+        onClose={() => setShowComingSoon(false)}
+      />
     </nav>
   );
 }

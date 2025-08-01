@@ -2,6 +2,7 @@
 import ArrowDown from "@/assets/arrow-down.svg";
 import ArrowUp from "@/assets/arrow-up.svg";
 import Info from "@/assets/info.svg";
+import ComingSoonPopup from "@/components/ComingSoonPopup";
 import { currencyPairs, getBaseSymbol } from "@/data/dummyData";
 import { apiService } from "@/lib/apiService";
 import { cn } from "@/utils/tailwind";
@@ -78,6 +79,7 @@ function Staking() {
   const [currencyIndex, setCurrencyIndex] = useState(0);
   const [tokenData, setTokenData] = useState<{ [key: string]: TokenData }>({});
   const [loading, setLoading] = useState(true);
+  const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Convert exchange back to pair format for display
   const currentPair =
@@ -268,7 +270,10 @@ function Staking() {
         <FuturesStrategySlider />
       </div>
       <div className="">
-        <button className="w-full bg-primary h-[48px] rounded-xl font-semibold font-area text-[#262626]">
+        <button
+          onClick={() => setShowComingSoon(true)}
+          className="w-full bg-primary h-[48px] rounded-xl font-semibold font-area text-[#262626] hover:bg-opacity-90 transition-all duration-200"
+        >
           Connect Wallet
         </button>
       </div>
@@ -293,6 +298,12 @@ function Staking() {
           All orders are pre-trade and post-trade private.
         </p>
       </div>
+
+      {/* Coming Soon Popup */}
+      <ComingSoonPopup
+        isOpen={showComingSoon}
+        onClose={() => setShowComingSoon(false)}
+      />
     </div>
   );
 }

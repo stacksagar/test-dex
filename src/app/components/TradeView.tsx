@@ -26,9 +26,6 @@ const CustomSingleValue = (props: any) => {
       <span className="font-semibold block font-area text-[#262626] text-base">
         {props.data.label}
       </span>
-      <span className="font-semibold block text-xs text-[#595959]">
-        [{props.data.label}]
-      </span>
     </components.SingleValue>
   );
 };
@@ -161,20 +158,22 @@ const InfoBar = () => {
   // Format the data for display
   const displayPrice = currentTokenData?.price
     ? formatPrice(currentTokenData.price)
-    : "$105,385.21";
+    : "$0.00";
   const displayVolume = currentTokenData?.volume_24h
     ? formatVolume(currentTokenData.volume_24h)
-    : "$22.1m";
+    : "$0.00";
   const percentChange = currentTokenData?.percent_change_24h
     ? formatPercentChange(currentTokenData.percent_change_24h)
-    : { formatted: "+0.36%", isPositive: true };
+    : { formatted: "+0.00%", isPositive: true };
 
   // Calculate some derived values for display
   const availableLiquidity = currentTokenData?.liquidity?.total_tvl
     ? formatVolume(currentTokenData.liquidity.total_tvl)
-    : "$72.8m";
+    : "$0.00";
 
   // Available liquidity change (use price change as proxy for liquidity change)
+  // Logic: If token price goes up, liquidity tends to increase (more demand)
+  // Arrow shows: Green ↗️ if positive change, Red ↘️ if negative change
   const liquidityChange = currentTokenData?.percent_change_24h
     ? (currentTokenData.percent_change_24h / 100) * 0.5 // Half the price change as liquidity change
     : 0.032; // Default +3.2%
@@ -187,6 +186,8 @@ const InfoBar = () => {
     : "$23.9m";
 
   // Net funding rate (single value with direction)
+  // Logic: Positive rate = Longs pay Shorts (bullish sentiment), Negative = Shorts pay Longs (bearish sentiment)
+  // Arrow shows: Green ↗️ if positive funding rate, Red ↘️ if negative funding rate
   const netFundingRate =
     currentTokenData?.funding_rate?.average_rate || 0.000014; // Default 0.0014%
   const fundingRateFormatted = `${netFundingRate >= 0 ? "+" : ""}${(
@@ -209,13 +210,6 @@ const InfoBar = () => {
       {error && (
         <div className="absolute top-2 right-2 text-xs text-red-500 z-20">
           {error}
-        </div>
-      )}
-
-      {/* Sync indicator */}
-      {!loading && !error && (
-        <div className="absolute top-2 right-2 text-xs text-green-600 z-20">
-          ✓ Synced
         </div>
       )}
 
