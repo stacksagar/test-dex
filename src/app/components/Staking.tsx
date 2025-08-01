@@ -102,17 +102,19 @@ function Staking() {
   const calculateEstimatedReceive = () => {
     if (!amount || !currentTokenData?.price) {
       // Return the currency you would receive based on current currency index
-      const receiveCurrency = currencyIndex === 0 
-        ? currentPair.value.split("/")[1] // If paying with base, receive quote
-        : currentPair.value.split("/")[0]; // If paying with quote, receive base
+      const receiveCurrency =
+        currencyIndex === 0
+          ? currentPair.value.split("/")[1] // If paying with base, receive quote
+          : currentPair.value.split("/")[0]; // If paying with quote, receive base
       return `0.00 ${receiveCurrency}`;
     }
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount)) {
-      const receiveCurrency = currencyIndex === 0 
-        ? currentPair.value.split("/")[1] 
-        : currentPair.value.split("/")[0];
+      const receiveCurrency =
+        currencyIndex === 0
+          ? currentPair.value.split("/")[1]
+          : currentPair.value.split("/")[0];
       return `0 ${receiveCurrency}`;
     }
 

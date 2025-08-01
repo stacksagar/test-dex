@@ -175,12 +175,12 @@ const InfoBar = () => {
     ? (currentTokenData.percent_change_24h / 100) * 0.5 // Half the price change as liquidity change
     : 0.032; // Default +3.2%
 
-  const openInterestUp = currentTokenData?.volume_24h
-    ? formatVolume(currentTokenData.volume_24h * 0.48)
-    : "$22.9m";
-  const openInterestDown = currentTokenData?.volume_24h
-    ? formatVolume(currentTokenData.volume_24h * 0.52)
-    : "$23.9m";
+  // const openInterestUp = currentTokenData?.volume_24h
+  //   ? formatVolume(currentTokenData.volume_24h * 0.48)
+  //   : "$22.9m";
+  // const openInterestDown = currentTokenData?.volume_24h
+  //   ? formatVolume(currentTokenData.volume_24h * 0.52)
+  //   : "$23.9m";
 
   // Open Interest (single value with direction based on market sentiment)
   // Logic: Use volume as proxy for open interest, direction based on price change
